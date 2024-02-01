@@ -1,0 +1,10 @@
+-   id: ast-grep
+    name: ast-grep
+    description: ''
+    entry: sg
+    language: node
+    'types': [javascript]
+    args: []
+    require_serial: false
+    additional_dependencies: ["@ast-grep/cli@latest"]
+    minimum_pre_commit_version: '0'
