@@ -1,10 +1,21 @@
 -   id: ast-grep
     name: ast-grep
-    description: ''
+    description: "ast-grep scan"
     entry: sg
     language: node
-    'types': [javascript]
-    args: []
+    args: ["scan", "--report-style=short"]
+    types: ["text"]
     require_serial: false
     additional_dependencies: ["@ast-grep/cli@latest"]
-    minimum_pre_commit_version: '0'
+    minimum_pre_commit_version: "0"
+
+-   id: ast-grep-fix
+    name: ast-grep-fix
+    description: "ast-grep autofixer"
+    entry: sg
+    language: node
+    args: ["scan", "--report-style=short", "--update-all"]
+    types: ["text"]
+    require_serial: false
+    additional_dependencies: ["@ast-grep/cli@latest"]
+    minimum_pre_commit_version: "0"
