@@ -10,17 +10,31 @@ Minimal git hooks to run [`ast-grep`](https://github.com/ast-grep/ast-grep) base
 
 Add this to your `.pre-commit-config.yaml`:
 ```
-    -   repo: https://github.com/boidolr/pre-commit-ast-grep
-        rev: v0.1.0  # Use the ref you want to point at
-        hooks:
-        -   id: ast-grep
-        # -   id: ...
+  - repo: https://github.com/boidolr/pre-commit-ast-grep
+    rev: v0.2.0  # Use the ref you want to point at
+    hooks:
+      - id: ast-grep
 ```
 
-## Available hooks
+### Automatically execute rewrites
 
-- **`ast-grep`**: Run `ast-grep scan` and fail on errors.
-- **`ast-grep-fix`**: Run `ast-grep scan` and apply available fixers (as well as fail on errors).
+```
+  - repo: https://github.com/boidolr/pre-commit-ast-grep
+    rev: v0.2.0  # Use the ref you want to point at
+    hooks:
+      - id: ast-grep
+          args: ["--update-all"]
+```
+
+### Provide explicit configuration
+
+```
+  - repo: https://github.com/boidolr/pre-commit-ast-grep
+    rev: v0.2.0  # Use the ref you want to point at
+    hooks:
+      - id: ast-grep
+        args: ["--config", "/some/path/sgconfig.yaml"]
+```
 
 ## How to write rules
 
