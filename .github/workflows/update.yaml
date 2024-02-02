@@ -1,0 +1,46 @@
+name: Update package
+on:
+  schedule:
+    - cron: "15 7 */9 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get current version
+        id: version
+        run: |
+         version=$(npm view @ast-grep/cli version)
+         echo "VERSION=${version}" >> $GITHUB_OUTPUT
+      - name: Update version
+        run: |
+          import pathlib, re
+
+          version = "${{ steps.version.outputs.VERSION }}"
+          config = pathlib.Path(".pre-commit-hooks.yaml")
+          content = config.read_text()
+          update = re.sub(r'"@ast-grep/cli@[^\"]+"', f'"@ast-grep/cli@{version}"', content)
+          if update != content:
+            config.write_text(update)
+
+        shell: python
+      - name: Push update
+        id: push
+        uses: boidolr/actions/git-push@main
+        with:
+          message: "chore: update version"
+          branch: main
+      - name: Tag update
+        if: ${{ steps.push.outputs.pushed-changes == 'true' }}
+        run: |
+          git config user.name github-actions
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git tag  "${{ steps.version.outputs.VERSION }}"
+          git push --tags origin
