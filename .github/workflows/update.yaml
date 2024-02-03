@@ -4,43 +4,74 @@ on:
     - cron: "15 7 */9 * *"
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   update-version:
     runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.version.outputs.VERSION }}
+      UPDATED: ${{ steps.python.outputs.UPDATED }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
       - name: Get current version
         id: version
         run: |
          version=$(npm view @ast-grep/cli version)
          echo "VERSION=${version}" >> $GITHUB_OUTPUT
+
       - name: Update version
+        id: python
+        shell: python
         run: |
-          import pathlib, re
+          import pathlib, re, os
 
           version = "${{ steps.version.outputs.VERSION }}"
           config = pathlib.Path(".pre-commit-hooks.yaml")
-          content = config.read_text()
-          update = re.sub(r'"@ast-grep/cli@[^\"]+"', f'"@ast-grep/cli@{version}"', content)
-          if update != content:
-            config.write_text(update)
+          readme = pathlib.Path("README.md")
 
-        shell: python
-      - name: Push update
-        id: push
-        uses: boidolr/actions/git-push@main
+          original_config = config.read_text()
+          original_readme = readme.read_text()
+          updated_config = re.sub(r'"@ast-grep/cli@[^\"]+"', f'"@ast-grep/cli@{version}"', original_config)
+          updated_readme = re.sub(r'rev: v\d+\.\d+\.\d+', f'rev: {version}"', original_readme)
+
+          if updated_config != original_config:
+            config.write_text(updated_config)
+            readme.write_text(updated_readme)
+
+            with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+                print("UPDATED=true", file=fh)
+
+      - name: Stash changes
+        uses: actions/upload-artifact@v4
         with:
-          message: "chore: update version"
-          branch: main
-      - name: Tag update
-        if: ${{ steps.push.outputs.pushed-changes == 'true' }}
+          name: config
+          path: |
+            .pre-commit-hooks.yaml
+            README.md
+
+  commit-update:
+    runs-on: ubuntu-latest
+    needs: ["update-version"]
+    if: ${{  needs.update-version.outputs.UPDATED == 'true' }}
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: config
+
+      - name: Push update
         run: |
           git config user.name github-actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git tag  "${{ steps.version.outputs.VERSION }}"
-          git push --tags origin
+
+          git commit -am "chore: update version "
+          git tag "${{ needs.update-version.outputs.VERSION }}"
+          git push --tags origin main
