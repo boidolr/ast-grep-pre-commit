@@ -2,6 +2,5 @@
     "extends": [
         "github>boidolr/actions",
         "github>boidolr/actions//presets/precommit"
-    ],
-    "ignoreTests": true
+    ]
 }
