@@ -1,0 +1,6 @@
+repos:
+  - repo: https://github.com/boidolr/precommit-ast-grep
+    rev: main
+    hooks:
+      - id: ast-grep
+        args: ["--config=tests/sgconfig.yaml", "--filter=ast-grep-pass", "--update-all"]

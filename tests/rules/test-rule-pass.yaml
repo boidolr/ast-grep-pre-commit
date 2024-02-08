@@ -1,0 +1,9 @@
+id: ast-grep-pass
+message: Test pass rule
+severity: error
+language: json
+rule:
+  kind: pair
+  has:
+    field: key
+    regex: "no match"
