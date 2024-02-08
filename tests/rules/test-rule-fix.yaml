@@ -1,0 +1,11 @@
+id: ast-grep-fix
+message: Test fix rule
+severity: error
+language: json
+rule:
+  kind: pair
+  has:
+    field: key
+    regex: version
+fix: |
+  "version": "0.1.0"
