@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-version:
+  check-version:
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.version.outputs.VERSION }}
@@ -18,8 +18,15 @@ jobs:
       - name: Get current version
         id: version
         run: |
-         version=$(npm view @ast-grep/cli version)
-         echo "VERSION=${version}" >> $GITHUB_OUTPUT
+          version=$(npm view @ast-grep/cli version)
+          version_check='^[0-9]+\.[0-9]+\.[0-9]+$'
+
+          if [[ $version =~ $version_check ]]; then
+            echo "VERSION=${version}" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Invalid package version: '$version'"
+            exit 1
+          fi
 
       - name: Update version
         id: python
@@ -27,34 +34,20 @@ jobs:
         run: |
           import pathlib, re, os
 
-          version = "${{ steps.version.outputs.VERSION }}"
-          config = pathlib.Path(".pre-commit-hooks.yaml")
-          readme = pathlib.Path("README.md")
+          npm_version = "${{ steps.version.outputs.VERSION }}"
+          config = pathlib.Path(".pre-commit-hooks.yaml").read_text()
 
-          original_config = config.read_text()
-          original_readme = readme.read_text()
-          updated_config = re.sub(r'"@ast-grep/cli@[^\"]+"', f'"@ast-grep/cli@{version}"', original_config)
-          updated_readme = re.sub(r'rev: v\d+\.\d+\.\d+', f'rev: {version}"', original_readme)
+          match = re.search(r'"@ast-grep/cli@([^\"]+)"', config)
+          config_version = match.group(1) if match else npm_version
 
-          if updated_config != original_config:
-            config.write_text(updated_config)
-            readme.write_text(updated_readme)
+          updated = str(npm_version != config_version).lower()
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              print(f"UPDATED={updated}", file=fh)
 
-            with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
-                print("UPDATED=true", file=fh)
-
-      - name: Stash changes
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4
-        with:
-          name: config
-          path: |
-            .pre-commit-hooks.yaml
-            README.md
-
-  commit-update:
+  update-update:
     runs-on: ubuntu-latest
-    needs: ["update-version"]
-    if: ${{  needs.update-version.outputs.UPDATED == 'true' }}
+    needs: ["check-version"]
+    if: ${{  needs.check-version.outputs.UPDATED == 'true' }}
 
     permissions:
       contents: write
@@ -63,15 +56,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
-      - uses: actions/download-artifact@eaceaf801fd36c7dee90939fad912460b18a1ffe # v4
-        with:
-          name: config
+      - name: Update version
+        shell: python
+        run: |
+          import pathlib, re, os
+
+          version = "${{ needs.check-version.outputs.VERSION }}"
+          config = pathlib.Path(".pre-commit-hooks.yaml")
+          readme = pathlib.Path("README.md")
+
+          original_config = config.read_text()
+          original_readme = readme.read_text()
+          updated_config = re.sub(r'"@ast-grep/cli@[^\"]+"', f'"@ast-grep/cli@{version}"', original_config)
+          updated_readme = re.sub(r'rev: v\d+\.\d+\.\d+', f'rev: {version}', original_readme)
+
+          config.write_text(updated_config)
+          readme.write_text(updated_readme)
 
       - name: Push update
         run: |
           git config user.name github-actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
-          git commit -am "chore: update version "
-          git tag "${{ needs.update-version.outputs.VERSION }}"
+          git commit -am "chore: update version ${{ needs.check-version.outputs.VERSION }}"
+          git tag "${{ needs.check-version.outputs.VERSION }}"
           git push --tags origin main
