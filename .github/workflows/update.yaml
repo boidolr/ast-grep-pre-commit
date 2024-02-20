@@ -68,7 +68,7 @@ jobs:
           original_config = config.read_text()
           original_readme = readme.read_text()
           updated_config = re.sub(r'"@ast-grep/cli@[^\"]+"', f'"@ast-grep/cli@{version}"', original_config)
-          updated_readme = re.sub(r'rev: v\d+\.\d+\.\d+', f'rev: {version}', original_readme)
+          updated_readme = re.sub(r'rev: \d+\.\d+\.\d+', f'rev: {version}', original_readme)
 
           config.write_text(updated_config)
           readme.write_text(updated_readme)
