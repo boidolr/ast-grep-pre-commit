@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.version.outputs.VERSION }}
-      UPDATED: ${{ steps.python.outputs.UPDATED }}
+      UPDATED: ${{ steps.updated.outputs.UPDATED }}
 
     steps:
       - name: Checkout
@@ -21,20 +21,22 @@ jobs:
           version=$(npm view @ast-grep/cli version)
           version_check='^[0-9]+\.[0-9]+\.[0-9]+$'
 
-          if [[ $version =~ $version_check ]]; then
+          if [[ "${version}" =~ $version_check ]]; then
             echo "VERSION=${version}" >> $GITHUB_OUTPUT
           else
             echo "::error::Invalid package version: '$version'"
             exit 1
           fi
 
-      - name: Update version
-        id: python
+      - name: Set version
+        id: updated
         shell: python
+        env:
+          VERSION: "${{ steps.version.outputs.VERSION }}"
         run: |
           import pathlib, re, os
 
-          npm_version = "${{ steps.version.outputs.VERSION }}"
+          npm_version = os.environ["VERSION"]
           config = pathlib.Path(".pre-commit-hooks.yaml").read_text()
 
           match = re.search(r'"@ast-grep/cli@([^\"]+)"', config)
@@ -47,10 +49,13 @@ jobs:
   update-update:
     runs-on: ubuntu-latest
     needs: ["check-version"]
-    if: ${{  needs.check-version.outputs.UPDATED == 'true' }}
+    if: ${{ needs.check-version.outputs.UPDATED == 'true' }}
 
     permissions:
       contents: write
+
+    env:
+      VERSION: "${{ needs.check-version.outputs.VERSION }}"
 
     steps:
       - name: Checkout
@@ -61,7 +66,7 @@ jobs:
         run: |
           import pathlib, re, os
 
-          version = "${{ needs.check-version.outputs.VERSION }}"
+          version = os.environ["VERSION"]
           config = pathlib.Path(".pre-commit-hooks.yaml")
           readme = pathlib.Path("README.md")
 
@@ -78,6 +83,6 @@ jobs:
           git config user.name github-actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
-          git commit -am "chore: update version ${{ needs.check-version.outputs.VERSION }}"
-          git tag "${{ needs.check-version.outputs.VERSION }}"
+          git commit -am "chore: update version ${VERSION}"
+          git tag "${VERSION}"
           git push --tags origin main

@@ -30,8 +30,6 @@ Note that only rules with a severity of "error" will lead to the commit hook fai
         args: ["--update-all"]
 ```
 
-When executing rewrites, the commit hook will fail for any severity.
-
 
 ### Provide explicit configuration
 
