@@ -1,4 +1,4 @@
-name: "Test pre-commit hook"
+name: "Tests"
 
 on:
   push:
@@ -19,7 +19,18 @@ jobs:
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
-      - uses: boidolr/actions/run-precommit@main
+      - uses: boidolr/actions/setup-precommit@main
         with:
           working-directory: tests
 
+      - name: Check hook pass
+        run: pre-commit run --config "tests/.pre-commit-config.yaml" --all-files ast-grep-pass
+
+      - name: Check hook failure
+        shell: bash
+        run: |
+          set +e
+
+          pre-commit run --config "tests/.pre-commit-config.yaml" --all-files ast-grep-fail
+          if [[ "$?" == "0" ]]; then exit 1; fi
+          echo "::notice::Hook failed as expected"

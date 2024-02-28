@@ -1,0 +1,9 @@
+id: ast-grep-fail
+message: Test fail rule
+severity: error
+language: json
+rule:
+  kind: pair
+  has:
+    field: key
+    regex: ^"extends"$
