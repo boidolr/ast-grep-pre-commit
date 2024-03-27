@@ -12,7 +12,7 @@ Minimal git hook to run [ast-grep](https://github.com/ast-grep/ast-grep) based o
 Add this to your `.pre-commit-config.yaml`:
 ```
   - repo: https://github.com/boidolr/pre-commit-ast-grep
-    rev: 0.20.1  # Use the ref you want to point at
+    rev: 0.20.2  # Use the ref you want to point at
     hooks:
       - id: ast-grep
 ```
@@ -24,7 +24,7 @@ Note that only rules with a severity of "error" will lead to the commit hook fai
 
 ```
   - repo: https://github.com/boidolr/pre-commit-ast-grep
-    rev: 0.20.1
+    rev: 0.20.2
     hooks:
       - id: ast-grep
         args: ["--update-all"]
@@ -35,7 +35,7 @@ Note that only rules with a severity of "error" will lead to the commit hook fai
 
 ```
   - repo: https://github.com/boidolr/pre-commit-ast-grep
-    rev: 0.20.1
+    rev: 0.20.2
     hooks:
       - id: ast-grep
         args: ["--config", "/some/path/sgconfig.yaml"]
