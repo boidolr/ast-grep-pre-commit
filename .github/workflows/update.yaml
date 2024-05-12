@@ -22,13 +22,14 @@ jobs:
           version_check='^[0-9]+\.[0-9]+\.[0-9]+$'
 
           if [[ "${version}" =~ $version_check ]]; then
+            echo "Found version '$version'"
             echo "VERSION=${version}" >> $GITHUB_OUTPUT
           else
             echo "::error::Invalid package version: '$version'"
             exit 1
           fi
 
-      - name: Set version
+      - name: Check against local version
         id: updated
         shell: python
         env:
