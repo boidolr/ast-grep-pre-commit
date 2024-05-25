@@ -66,18 +66,17 @@ jobs:
         shell: python
         run: |
           import pathlib, re, os
+          from functools import partial
 
           version = os.environ["VERSION"]
-          config = pathlib.Path(".pre-commit-hooks.yaml")
-          readme = pathlib.Path("README.md")
-
-          original_config = config.read_text()
-          original_readme = readme.read_text()
-          updated_config = re.sub(r'"@ast-grep/cli@[^\"]+"', f'"@ast-grep/cli@{version}"', original_config)
-          updated_readme = re.sub(r'rev: \d+\.\d+\.\d+', f'rev: {version}', original_readme)
-
-          config.write_text(updated_config)
-          readme.write_text(updated_readme)
+          replacements = {
+            ".pre-commit-hooks.yaml": partial(re.sub, r'"@ast-grep/cli@[^\"]+"', f'"@ast-grep/cli@{version}"'),
+            "README.md": partial(re.sub, r'rev: \d+\.\d+\.\d+', f'rev: {version}'),
+          }
+          for name, replacer in replacements.items():
+            path = pathlib.Path(name)
+            content = path.read_text()
+            path.write_text(replacer(content))
 
       - name: Push update
         run: |
