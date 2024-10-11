@@ -19,18 +19,27 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
-      - uses: boidolr/actions/setup-precommit@main
+      - name: Install uv
+        uses: astral-sh/setup-uv@c9aa747934b6867b18bf8f6624a8929c4f76147b # v3
         with:
-          working-directory: tests
+          enable-cache: true
+          cache-suffix: "precommit"
+          cache-dependency-glob: tests/.pre-commit-config.yaml
+
+      - name: Cache pre-commit
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9   # v4
+        with:
+          path: ~/.cache/pre-commit
+          key: ${{ runner.os }}-pre-commit-${{ hashFiles('**/.pre-commit-config.yaml') }}
 
       - name: Check hook pass
-        run: pre-commit run --config "tests/.pre-commit-config.yaml" --all-files ast-grep-pass
+        run: uvx pre-commit run --config "tests/.pre-commit-config.yaml" --all-files ast-grep-pass
 
       - name: Check hook failure
         shell: bash
         run: |
           set +e
 
-          pre-commit run --config "tests/.pre-commit-config.yaml" --all-files ast-grep-fail
+          uvx pre-commit run --config "tests/.pre-commit-config.yaml" --all-files ast-grep-fail
           if [[ "$?" == "0" ]]; then exit 1; fi
           echo "::notice::Hook failed as expected"
