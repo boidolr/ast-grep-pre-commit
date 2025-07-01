@@ -43,14 +43,14 @@ Note that only rules with a severity of "error" will lead to the commit hook fai
 
 ### Overwrite ast-grep version
 
-The hook version mirror the version of ast-grep.
+The hook version mirrors the version of ast-grep.
 If for any reason you want up- or downgrade the ast-grep version used by the hook, for example to get an update before the hook was published, you can do so:
 ```
   - repo: https://github.com/boidolr/ast-grep-pre-commit
-    rev: 0.38.6
+    rev: 0.33.1
     hooks:
       - id: ast-grep
-        additional_dependencies: ["@ast-grep/cli@0.33.1"]  # set the desired version
+        additional_dependencies: ["@ast-grep/cli@0.38.1"]  # set the desired version
 ```
 
 
