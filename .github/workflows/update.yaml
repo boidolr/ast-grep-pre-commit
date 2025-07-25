@@ -37,13 +37,13 @@ jobs:
         run: |
           import pathlib, re, os
 
-          npm_version = os.environ["VERSION"]
+          current_version = os.environ["VERSION"]
           config = pathlib.Path(".pre-commit-hooks.yaml").read_text()
 
           match = re.search(r'"@ast-grep/cli@([^\"]+)"', config)
-          config_version = match.group(1) if match else npm_version
+          config_version = match.group(1) if match else current_version
 
-          updated = str(npm_version != config_version).lower()
+          updated = str(current_version != config_version).lower()
           with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
               print(f"UPDATED={updated}", file=fh)
 

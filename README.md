@@ -17,7 +17,8 @@ Add this to your `.pre-commit-config.yaml`:
       - id: ast-grep
 ```
 
-Note that only rules with a severity of "error" will lead to the commit hook failing.
+Note that, by default, only rules with a severity of "error" will lead to the commit hook failing.
+If you wish to handle rules differently, set their error level in the rule configuration or via `--error`.
 
 
 ### Automatically execute rewrites
