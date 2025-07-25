@@ -1,5 +1,5 @@
 repos:
-  - repo: https://github.com/boidolr/precommit-ast-grep
+  - repo: https://github.com/boidolr/ast-grep-pre-commit
     rev: main
     hooks:
       - alias: ast-grep-pass
