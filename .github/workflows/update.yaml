@@ -78,6 +78,9 @@ jobs:
             content = path.read_text()
             path.write_text(replacer(content))
 
+      - name: Run tests before push
+        uses: ./.github/actions/test-hooks
+
       - name: Push update
         run: |
           git config user.name "$GITHUB_ACTOR"

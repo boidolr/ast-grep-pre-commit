@@ -1,0 +1,29 @@
+name: Test hook integration
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@e92bafb6253dcd438e0484186d7669ea7a8ca1cc # v6
+      with:
+        enable-cache: true
+        cache-suffix: "precommit"
+        cache-dependency-glob: tests/.pre-commit-config.yaml
+
+    - name: Cache pre-commit
+      uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+      with:
+        path: ~/.cache/pre-commit
+        key: ${{ runner.os }}-pre-commit-${{ hashFiles('**/.pre-commit-config.yaml') }}
+
+    - name: Check hook pass
+      shell: bash
+      run: uvx pre-commit run --config "tests/.pre-commit-config.yaml" --all-files ast-grep-pass
+
+    - name: Check hook failure
+      shell: bash
+      run: |
+        set +e
+        uvx pre-commit run --config "tests/.pre-commit-config.yaml" --all-files ast-grep-fail
+        if [[ "$?" == "0" ]]; then exit 1; fi
+        echo "::notice::Hook failed as expected"
