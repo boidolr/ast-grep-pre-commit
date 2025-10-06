@@ -1,7 +1,7 @@
 -   id: ast-grep
     name: ast-grep
     description: "ast-grep scan"
-    entry: sg scan --report-style=short
+    entry: sg scan --report-style=short --color=never
     language: node
     types: ["text"]
     require_serial: false
