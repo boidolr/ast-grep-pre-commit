@@ -14,7 +14,7 @@ Add this to your `.pre-commit-config.yaml`:
   - repo: https://github.com/boidolr/ast-grep-pre-commit
     rev: 0.39.6  # Use the ref you want to point at
     hooks:
-      - id: ast-grep
+      - id: ast-grep  # or 'ast-grep-fix' to fix all
 ```
 
 Note that, by default, only rules with a severity of "error" will lead to the commit hook failing.

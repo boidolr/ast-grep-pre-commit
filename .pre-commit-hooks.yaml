@@ -7,3 +7,12 @@
     require_serial: false
     additional_dependencies: ["@ast-grep/cli@0.39.6"]
     minimum_pre_commit_version: "0"
+-   id: ast-grep-fix
+    name: ast-grep fix all
+    description: "ast-grep scan and fix all"
+    entry: sg scan -U --report-style=short --color=never
+    language: node
+    types: ["text"]
+    require_serial: false
+    additional_dependencies: ["@ast-grep/cli@0.39.6"]
+    minimum_pre_commit_version: "0"
