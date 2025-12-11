@@ -12,7 +12,7 @@ Minimal git hook to run [ast-grep](https://github.com/ast-grep/ast-grep) based o
 Add this to your `.pre-commit-config.yaml`:
 ```
   - repo: https://github.com/boidolr/ast-grep-pre-commit
-    rev: 0.40.0  # Use the ref you want to point at
+    rev: 0.40.1  # Use the ref you want to point at
     hooks:
       - id: ast-grep
 ```
@@ -25,7 +25,7 @@ If you wish to handle rules differently, set their error level in the rule confi
 
 ```
   - repo: https://github.com/boidolr/ast-grep-pre-commit
-    rev: 0.40.0
+    rev: 0.40.1
     hooks:
       - id: ast-grep
         args: ["--update-all"]
@@ -36,7 +36,7 @@ If you wish to handle rules differently, set their error level in the rule confi
 
 ```
   - repo: https://github.com/boidolr/ast-grep-pre-commit
-    rev: 0.40.0
+    rev: 0.40.1
     hooks:
       - id: ast-grep
         args: ["--config", "/some/path/sgconfig.yaml"]
@@ -48,7 +48,7 @@ The hook version mirrors the version of ast-grep.
 If for any reason you want up- or downgrade the ast-grep version used by the hook, for example to get an update before the hook was published, you can do so:
 ```
   - repo: https://github.com/boidolr/ast-grep-pre-commit
-    rev: 0.40.0
+    rev: 0.40.1
     hooks:
       - id: ast-grep
         additional_dependencies: ["@ast-grep/cli@0.38.1"]  # set the desired version
