@@ -1,21 +1,21 @@
 name: "Tests"
 
 on:
-  push:
-    branches:
-      - main
-      - dev
-      - develop
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
-  schedule:
-    - cron: "15 7 */7 * *"
+    push:
+        branches:
+            - main
+            - dev
+            - develop
+    pull_request:
+        branches:
+            - main
+    workflow_dispatch:
+    schedule:
+        - cron: "15 7 */7 * *"
 
 jobs:
-  pre-commit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
-      - uses: ./.github/actions/test-hooks
+    pre-commit:
+        runs-on: ubuntu-slim
+        steps:
+            - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
+            - uses: ./.github/actions/test-hooks
