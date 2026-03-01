@@ -48,7 +48,7 @@ jobs:
                       print(f"UPDATED={updated}", file=fh)
 
     update-update:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-slim
         needs: ["check-version"]
         if: ${{ needs.check-version.outputs.UPDATED == 'true' }}
 
