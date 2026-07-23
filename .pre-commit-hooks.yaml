@@ -7,3 +7,13 @@
     require_serial: false
     additional_dependencies: ["@ast-grep/cli@0.45.0"]
     minimum_pre_commit_version: "0"
+-   id: ast-grep-rule-tests
+    name: ast-grep-rule-tests
+    description: "run tests to verify ast-grep rules"
+    entry: ast-grep test --color=never
+    language: node
+    types: ["text"]
+    require_serial: false
+    additional_dependencies: [ "@ast-grep/cli@0.44.1" ]
+    minimum_pre_commit_version: "0"
+    
