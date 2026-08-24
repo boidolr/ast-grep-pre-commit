@@ -5,7 +5,7 @@
   language: node
   types: ["text"]
   require_serial: false
-  additional_dependencies: ["@ast-grep/cli@0.45.1"]
+  additional_dependencies: ["@ast-grep/cli@0.45.2"]
   minimum_pre_commit_version: "0"
 
 - id: ast-grep-rule-tests
@@ -16,5 +16,5 @@
   types: ["text"]
   require_serial: false
   pass_filenames: false
-  additional_dependencies: ["@ast-grep/cli@0.45.1"]
+  additional_dependencies: ["@ast-grep/cli@0.45.2"]
   minimum_pre_commit_version: "0"
