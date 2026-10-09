@@ -12,7 +12,7 @@ Add this to your `.pre-commit-config.yaml`:
 
 ```
   - repo: https://github.com/boidolr/ast-grep-pre-commit
-    rev: 0.45.3  # Use the ref you want to point at
+    rev: 0.50.0  # Use the ref you want to point at
     hooks:
       - id: ast-grep
 ```
@@ -24,7 +24,7 @@ If you wish to handle rules differently, set their error level in the rule confi
 
 ```
   - repo: https://github.com/boidolr/ast-grep-pre-commit
-    rev: 0.45.3
+    rev: 0.50.0
     hooks:
       - id: ast-grep
         args: ["--update-all"]
@@ -34,7 +34,7 @@ If you wish to handle rules differently, set their error level in the rule confi
 
 ```
   - repo: https://github.com/boidolr/ast-grep-pre-commit
-    rev: 0.45.3
+    rev: 0.50.0
     hooks:
       - id: ast-grep
         args: ["--config", "/some/path/sgconfig.yaml"]
@@ -46,7 +46,7 @@ Add this to your `.pre-commit-config.yaml`:
 
 ```
   - repo: https://github.com/boidolr/ast-grep-pre-commit
-    rev: 0.45.3  # Use the ref you want to point at
+    rev: 0.50.0  # Use the ref you want to point at
     hooks:
       - id: ast-grep-rule-tests
 ```
@@ -58,7 +58,7 @@ If for any reason you want up- or downgrade the ast-grep version used by the hoo
 
 ```
   - repo: https://github.com/boidolr/ast-grep-pre-commit
-    rev: 0.45.3
+    rev: 0.50.0
     hooks:
       - id: ast-grep
         additional_dependencies: ["@ast-grep/cli@0.38.1"]  # set the desired version
